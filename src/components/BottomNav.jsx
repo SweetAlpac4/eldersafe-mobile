@@ -19,12 +19,11 @@ export default function BottomNav({ active, onChange }) {
               ...styles.btn,
               color:      isActive ? "var(--accent)" : "var(--text-faint)",
               borderTop:  isActive ? "2px solid var(--accent)" : "2px solid transparent",
-              background: isActive ? "var(--accent-light)" : "transparent",
             }}
           >
             <span style={{
-              ...styles.label,
-              fontWeight: isActive ? "700" : "400",
+              fontSize: "12px",
+              fontWeight: isActive ? "700" : "500",
             }}>
               {tab.label}
             </span>
@@ -44,20 +43,15 @@ const styles = {
     width: "100%",
     maxWidth: "430px",
     background: "var(--surface)",
-    borderTop: "2px solid var(--border-dark)",
+    borderTop: "1px solid var(--border-dark)",
     display: "flex",
     zIndex: 100,
   },
   btn: {
     flex: 1,
-    padding: "12px 4px 20px",
+    padding: "14px 4px 24px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    transition: "all 0.1s",
-  },
-  label: {
-    fontSize: "11px",
-    letterSpacing: "0.5px",
   },
 }

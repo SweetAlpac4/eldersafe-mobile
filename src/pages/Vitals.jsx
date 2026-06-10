@@ -1,4 +1,3 @@
-import BigCard from "../components/BigCard"
 import StatusBadge from "../components/StatusBadge"
 
 function getHrStatus(hr) {
@@ -13,133 +12,157 @@ function getSpo2Status(spo2) {
   return "normal"
 }
 
-const valueColor = {
+const valColor = {
   normal:  "var(--text)",
-  warning: "#7a4a00",
+  warning: "var(--warning)",
   danger:  "var(--danger)",
 }
 
 export default function Vitals({ vitals }) {
   return (
     <div style={styles.wrap}>
-      <div style={styles.pageHeader}>
+      <div style={styles.topbar}>
         <div style={styles.pageTitle}>Tanda Vital</div>
         <div style={styles.liveRow}>
           <span style={styles.liveDot} />
-          <span style={styles.liveText}>Langsung — diperbarui tiap 2 detik</span>
+          <span style={styles.liveText}>Langsung</span>
         </div>
       </div>
 
-      <div style={styles.body}>
-        <BigCard
-          label="Detak Jantung"
-          value={vitals.hr}
-          unit="bpm"
-          color={valueColor[getHrStatus(vitals.hr)]}
-          note="Normal: 60 – 100 bpm"
-        >
+      {/* HR */}
+      <div style={styles.bigCard}>
+        <div style={styles.cardTop}>
+          <span style={styles.cardLabel}>DETAK JANTUNG</span>
           <StatusBadge status={getHrStatus(vitals.hr)} />
-        </BigCard>
+        </div>
+        <div style={{ ...styles.bigNum, color: valColor[getHrStatus(vitals.hr)] }}>
+          {vitals.hr}
+          <span style={styles.bigUnit}> bpm</span>
+        </div>
+        <div style={styles.cardNote}>Normal: 60 – 100 bpm</div>
+      </div>
 
-        <BigCard
-          label="Kadar Oksigen Darah"
-          value={vitals.spo2}
-          unit="%"
-          color={valueColor[getSpo2Status(vitals.spo2)]}
-          note="Normal: di atas 94%"
-        >
+      {/* SpO2 */}
+      <div style={styles.bigCard}>
+        <div style={styles.cardTop}>
+          <span style={styles.cardLabel}>KADAR OKSIGEN DARAH</span>
           <StatusBadge status={getSpo2Status(vitals.spo2)} />
-        </BigCard>
-
-        <BigCard label="Postur Saat Ini">
-          <div style={styles.posturVal}>{vitals.posture}</div>
-          <div style={styles.posturNote}>Sensor MPU-6050</div>
-        </BigCard>
-
-        <div style={styles.sensorCard}>
-          <div style={styles.sensorTitle}>DATA SENSOR RAW</div>
-          <div style={styles.sensorRow}>
-            <span style={styles.sensorLabel}>Akselerasi</span>
-            <span style={styles.sensorVal}>{vitals.accel} g</span>
-          </div>
-          <div style={styles.sensorRow}>
-            <span style={styles.sensorLabel}>Giroskop</span>
-            <span style={styles.sensorVal}>{vitals.gyro} °/s</span>
-          </div>
+        </div>
+        <div style={{ ...styles.bigNum, color: valColor[getSpo2Status(vitals.spo2)] }}>
+          {vitals.spo2}
+          <span style={styles.bigUnit}> %</span>
+        </div>
+        <div style={styles.cardNote}>
+          Kadar oksigen normal di atas 94%. Makin tinggi makin baik.
         </div>
       </div>
+
+      {/* Postur + sensor */}
+      <div style={styles.rowGrid}>
+        <div style={styles.halfCard}>
+          <div style={styles.cardLabel}>POSTUR</div>
+          <div style={styles.halfVal}>{vitals.posture}</div>
+        </div>
+        <div style={{ ...styles.halfCard, borderLeft: "1px solid var(--border)" }}>
+          <div style={styles.cardLabel}>AKSELERASI</div>
+          <div style={styles.halfVal}>{vitals.accel} <span style={styles.halfUnit}>g</span></div>
+        </div>
+      </div>
+
     </div>
   )
 }
 
 const styles = {
-  wrap: { paddingBottom: "100px" },
-  pageHeader: {
-    background: "var(--surface)",
-    borderBottom: "2px solid var(--border-dark)",
+  wrap: { paddingBottom: "80px" },
+  topbar: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: "20px",
+    background: "var(--surface)",
+    borderBottom: "1px solid var(--border-dark)",
   },
   pageTitle: {
-    fontSize: "22px",
-    fontWeight: "bold",
+    fontSize: "18px",
+    fontWeight: "800",
     color: "var(--text)",
-    marginBottom: "6px",
   },
   liveRow: {
     display: "flex",
     alignItems: "center",
-    gap: "8px",
+    gap: "6px",
   },
   liveDot: {
     display: "inline-block",
-    width: "8px",
-    height: "8px",
+    width: "7px",
+    height: "7px",
     borderRadius: "50%",
     background: "var(--accent)",
     animation: "livePulse 1.5s infinite",
   },
   liveText: {
-    fontFamily: "'Courier New', monospace",
     fontSize: "12px",
-    color: "var(--text-faint)",
+    fontWeight: "600",
+    color: "var(--accent)",
   },
-  body: { padding: "16px 20px" },
-  posturVal: {
-    fontSize: "36px",
-    fontWeight: "bold",
-    color: "var(--text)",
-    marginBottom: "4px",
-  },
-  posturNote: {
-    fontFamily: "'Courier New', monospace",
-    fontSize: "12px",
-    color: "var(--text-faint)",
-  },
-  sensorCard: {
+  bigCard: {
     background: "var(--surface)",
-    border: "1px solid var(--border)",
-    borderTop: "3px solid var(--border-dark)",
+    borderBottom: "1px solid var(--border)",
     padding: "20px",
+    marginTop: "12px",
+    borderTop: "1px solid var(--border)",
   },
-  sensorTitle: {
-    fontFamily: "'Courier New', monospace",
-    fontSize: "10px",
-    letterSpacing: "2px",
-    color: "var(--text-faint)",
-    fontWeight: "bold",
+  cardTop: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: "12px",
   },
-  sensorRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "12px 0",
-    borderBottom: "1px solid var(--border)",
-    fontSize: "15px",
+  cardLabel: {
+    fontSize: "11px",
+    fontWeight: "700",
+    letterSpacing: "1px",
+    color: "var(--text-faint)",
   },
-  sensorLabel: { color: "var(--text-muted)" },
-  sensorVal: {
-    fontFamily: "'Courier New', monospace",
-    fontWeight: "bold",
+  bigNum: {
+    fontSize: "56px",
+    fontWeight: "800",
+    lineHeight: 1,
+    letterSpacing: "-2px",
+    marginBottom: "10px",
+  },
+  bigUnit: {
+    fontSize: "22px",
+    fontWeight: "600",
+    letterSpacing: "0",
+  },
+  cardNote: {
+    fontSize: "13px",
+    color: "var(--text-muted)",
+    paddingTop: "12px",
+    borderTop: "1px solid var(--border)",
+  },
+  rowGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    background: "var(--surface)",
+    borderTop: "1px solid var(--border)",
+    borderBottom: "1px solid var(--border)",
+    marginTop: "12px",
+  },
+  halfCard: {
+    padding: "20px",
+  },
+  halfVal: {
+    fontSize: "28px",
+    fontWeight: "800",
     color: "var(--text)",
+    marginTop: "10px",
+  },
+  halfUnit: {
+    fontSize: "16px",
+    fontWeight: "500",
+    color: "var(--text-muted)",
   },
 }

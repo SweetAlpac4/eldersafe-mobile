@@ -1,4 +1,4 @@
-import {patient} from "../data/dummy"
+import { patient } from "../data/dummy"
 import StatusBadge from "../components/StatusBadge"
 
 function getHrStatus(hr) {
@@ -19,77 +19,95 @@ function overallStatus(hr, spo2) {
   return "normal"
 }
 
+const valColor = {
+  normal:  "var(--text)",
+  warning: "var(--warning)",
+  danger:  "var(--danger)",
+}
+
+const statusBorderColor = {
+  normal:  "var(--accent)",
+  warning: "var(--warning)",
+  danger:  "var(--danger)",
+}
+
 export default function Home({ vitals }) {
   const status = overallStatus(vitals.hr, vitals.spo2)
 
-  const now = new Date().toLocaleDateString("id-ID", {
+  const today = new Date().toLocaleDateString("id-ID", {
     weekday: "long", day: "numeric", month: "long", year: "numeric",
   })
-
-  const borderColor = {
-    normal:  "var(--accent)",
-    warning: "#c89040",
-    danger:  "var(--danger)",
-  }
 
   return (
     <div style={styles.wrap}>
 
-      <div style={styles.header}>
-        <div style={styles.headerTop}>
-          <div>
-            <div style={styles.appName}>ELDERSAFE</div>
-            <div style={styles.date}>{now}</div>
-          </div>
-          <div style={styles.battBox}>
-            <span style={styles.battLabel}>BATERAI</span>
-            <span style={styles.battVal}>72%</span>
-          </div>
+      {/* Topbar */}
+      <div style={styles.topbar}>
+        <div>
+          <div style={styles.appName}>ELDERSAFE</div>
+          <div style={styles.date}>{today}</div>
+        </div>
+        <div style={styles.livePill}>
+          <span style={styles.liveDot} />
+          Live
         </div>
       </div>
 
+      {/* Patient card */}
       <div style={{
         ...styles.patientCard,
-        borderTop: `4px solid ${borderColor[status]}`,
+        borderLeft: `4px solid ${statusBorderColor[status]}`,
       }}>
-        <div style={styles.patientRow}>
+        <div style={styles.patientLeft}>
           <div style={styles.avatar}>
             {patient.name.split(" ").map(w => w[0]).join("").slice(0, 2)}
           </div>
-          <div style={styles.patientInfo}>
+          <div>
             <div style={styles.patientName}>{patient.name}</div>
-            <div style={styles.patientSub}>{patient.age} Tahun — {patient.room}</div>
+            <div style={styles.patientSub}>{patient.age} Tahun · {patient.room}</div>
           </div>
-          <StatusBadge status={status} />
         </div>
+        <StatusBadge status={status} />
       </div>
 
-      <div style={styles.sectionLabel}>TANDA VITAL SEKARANG</div>
+      {/* Vital grid */}
+      <div style={styles.sectionHeader}>
+        <span style={styles.sectionTitle}>Tanda Vital</span>
+        <span style={styles.sectionSub}>Diperbarui otomatis</span>
+      </div>
+
       <div style={styles.vitalGrid}>
-        <div style={styles.vitalBox}>
+        <div style={styles.vitalCell}>
           <div style={styles.vitalLabel}>Detak Jantung</div>
           <div style={{
-            ...styles.vitalVal,
-            color: { normal: "var(--text)", warning: "#7a4a00", danger: "var(--danger)" }[getHrStatus(vitals.hr)],
+            ...styles.vitalNum,
+            color: valColor[getHrStatus(vitals.hr)],
           }}>
             {vitals.hr}
           </div>
           <div style={styles.vitalUnit}>bpm</div>
         </div>
-        <div style={styles.vitalBox}>
-          <div style={styles.vitalLabel}>Saturasi O2</div>
+        <div style={{ ...styles.vitalCell, borderLeft: "1px solid var(--border)" }}>
+          <div style={styles.vitalLabel}>Kadar O2 Darah</div>
           <div style={{
-            ...styles.vitalVal,
-            color: { normal: "var(--text)", warning: "#7a4a00", danger: "var(--danger)" }[getSpo2Status(vitals.spo2)],
+            ...styles.vitalNum,
+            color: valColor[getSpo2Status(vitals.spo2)],
           }}>
             {vitals.spo2}
           </div>
           <div style={styles.vitalUnit}>%</div>
         </div>
-        <div style={styles.vitalBox}>
-          <div style={styles.vitalLabel}>Postur</div>
-          <div style={{ ...styles.vitalVal, fontSize: "22px" }}>{vitals.posture}</div>
-          <div style={styles.vitalUnit}>saat ini</div>
+        <div style={{
+          ...styles.vitalCell,
+          borderTop: "1px solid var(--border)",
+          gridColumn: "span 2",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "16px 20px",
+        }}>
+          <div style={styles.vitalLabel}>Postur Saat Ini</div>
+          <div style={{ fontSize: "18px", fontWeight: "700" }}>{vitals.posture}</div>
         </div>
       </div>
 
@@ -98,121 +116,127 @@ export default function Home({ vitals }) {
 }
 
 const styles = {
-  wrap: { padding: "0 0 100px" },
-  header: {
-    background: "var(--surface)",
-    borderBottom: "2px solid var(--border-dark)",
-    padding: "20px",
-    marginBottom: "0",
-  },
-  headerTop: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-  },
-  appName: {
-    fontFamily: "'Courier New', monospace",
-    fontSize: "18px",
-    fontWeight: "bold",
-    letterSpacing: "4px",
-    color: "var(--text)",
-    marginBottom: "4px",
-  },
-  date: {
-    fontSize: "13px",
-    color: "var(--text-faint)",
-  },
-  battBox: {
-    border: "1px solid var(--border-dark)",
-    padding: "6px 12px",
-    textAlign: "center",
-  },
-  battLabel: {
-    display: "block",
-    fontFamily: "'Courier New', monospace",
-    fontSize: "9px",
-    letterSpacing: "1.5px",
-    color: "var(--text-faint)",
-    marginBottom: "2px",
-  },
-  battVal: {
-    display: "block",
-    fontSize: "16px",
-    fontWeight: "bold",
-    color: "var(--text)",
-  },
-  patientCard: {
-    background: "var(--surface)",
-    borderLeft: "none",
-    borderRight: "none",
-    borderBottom: "1px solid var(--border)",
-    padding: "16px 20px",
-    marginBottom: "0",
-  },
-  patientRow: {
+  wrap: { paddingBottom: "80px" },
+  topbar: {
     display: "flex",
     alignItems: "center",
-    gap: "14px",
+    justifyContent: "space-between",
+    padding: "20px 20px 16px",
+    background: "var(--surface)",
+    borderBottom: "1px solid var(--border-dark)",
+  },
+  appName: {
+    fontSize: "17px",
+    fontWeight: "800",
+    letterSpacing: "3px",
+    color: "var(--text)",
+    marginBottom: "3px",
+  },
+  date: {
+    fontSize: "12px",
+    color: "var(--text-faint)",
+    fontWeight: "400",
+  },
+  livePill: {
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
+    fontSize: "12px",
+    fontWeight: "600",
+    color: "var(--accent)",
+    background: "var(--accent-light)",
+    padding: "6px 12px",
+    border: "1px solid var(--accent)",
+  },
+  liveDot: {
+    width: "7px",
+    height: "7px",
+    borderRadius: "50%",
+    background: "var(--accent)",
+    display: "inline-block",
+    animation: "livePulse 1.5s infinite",
+  },
+  patientCard: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "16px 20px",
+    background: "var(--surface)",
+    borderBottom: "1px solid var(--border)",
+    borderTop: "1px solid var(--border)",
+    marginTop: "12px",
+  },
+  patientLeft: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
   },
   avatar: {
-    width: "44px",
-    height: "44px",
+    width: "42px",
+    height: "42px",
     background: "var(--accent)",
-    color: "#f7f4ee",
+    color: "#fff",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "15px",
-    fontWeight: "bold",
+    fontSize: "14px",
+    fontWeight: "700",
     flexShrink: 0,
-    fontFamily: "'Courier New', monospace",
   },
-  patientInfo: { flex: 1 },
   patientName: {
-    fontSize: "17px",
-    fontWeight: "bold",
+    fontSize: "16px",
+    fontWeight: "700",
     color: "var(--text)",
+    marginBottom: "2px",
   },
   patientSub: {
     fontSize: "13px",
     color: "var(--text-muted)",
-    marginTop: "2px",
   },
-  sectionLabel: {
-    fontFamily: "'Courier New', monospace",
-    fontSize: "10px",
-    letterSpacing: "2px",
+  sectionHeader: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "16px 20px 10px",
+  },
+  sectionTitle: {
+    fontSize: "14px",
+    fontWeight: "700",
+    color: "var(--text)",
+  },
+  sectionSub: {
+    fontSize: "12px",
     color: "var(--text-faint)",
-    fontWeight: "bold",
-    padding: "16px 20px 8px",
-    borderBottom: "1px solid var(--border)",
   },
   vitalGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    borderBottom: "1px solid var(--border)",
-  },
-  vitalBox: {
-    padding: "16px 12px",
-    textAlign: "center",
-    borderRight: "1px solid var(--border)",
+    gridTemplateColumns: "1fr 1fr",
     background: "var(--surface)",
+    border: "1px solid var(--border-dark)",
+    borderLeft: "none",
+    borderRight: "none",
+  },
+  vitalCell: {
+    padding: "20px",
   },
   vitalLabel: {
-    fontFamily: "'Courier New', monospace",
-    fontSize: "10px",
-    letterSpacing: "1px",
+    fontSize: "12px",
+    fontWeight: "500",
     color: "var(--text-faint)",
-    marginBottom: "8px",
+    marginBottom: "10px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
   },
-  vitalVal: {
-    fontSize: "32px",
-    fontWeight: "bold",
+  vitalNum: {
+    fontSize: "44px",
+    fontWeight: "800",
     lineHeight: 1,
     marginBottom: "4px",
+    letterSpacing: "-1px",
   },
   vitalUnit: {
-    fontSize: "12px",
+    fontSize: "13px",
     color: "var(--text-muted)",
+    fontWeight: "500",
   },
 }

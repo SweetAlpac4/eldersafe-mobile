@@ -13,7 +13,9 @@ export default function Chat() {
       from: "me",
       name: "Saya",
       text,
-      time: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
+      time: new Date().toLocaleTimeString("id-ID", {
+        hour: "2-digit", minute: "2-digit",
+      }),
     }])
     setInput("")
   }
@@ -26,11 +28,14 @@ export default function Chat() {
     <div style={styles.wrap}>
       <div style={styles.header}>
         <div style={styles.avatar}>IS</div>
-        <div>
-          <div style={styles.name}>Ibu Sari (Caretaker)</div>
-          <div style={styles.sub}>Caretaker {patient.name}</div>
+        <div style={styles.headerInfo}>
+          <div style={styles.name}>Ibu Sari</div>
+          <div style={styles.sub}>Caretaker · {patient.name}</div>
         </div>
-        <div style={styles.onlineDot} />
+        <div style={styles.onlineWrap}>
+          <span style={styles.onlineDot} />
+          <span style={styles.onlineText}>Online</span>
+        </div>
       </div>
 
       <div style={styles.messages}>
@@ -41,12 +46,13 @@ export default function Chat() {
               ...styles.msgRow,
               justifyContent: isMe ? "flex-end" : "flex-start",
             }}>
+              {!isMe && <div style={styles.msgAvatar}>IS</div>}
               <div style={{
                 ...styles.bubble,
-                background: isMe ? "var(--chat-me)" : "var(--chat-other)",
-                borderBottomRightRadius: isMe ? "4px" : "var(--radius-sm)",
-                borderBottomLeftRadius:  isMe ? "var(--radius-sm)" : "4px",
-                boxShadow: "var(--shadow-sm)",
+                background:  isMe ? "var(--accent-light)" : "var(--surface)",
+                borderColor: isMe ? "var(--accent)" : "var(--border)",
+                borderLeft:  isMe ? "1px solid var(--border)" : "3px solid var(--border-dark)",
+                borderRight: isMe ? "3px solid var(--accent)" : "1px solid var(--border)",
               }}>
                 <div style={styles.bubbleText}>{m.text}</div>
                 <div style={styles.bubbleTime}>{m.time}</div>
@@ -64,9 +70,7 @@ export default function Chat() {
           onKeyDown={handleKey}
           placeholder="Ketik pesan..."
         />
-        <button style={styles.sendBtn} onClick={send}>
-          Kirim
-        </button>
+        <button style={styles.sendBtn} onClick={send}>Kirim</button>
       </div>
     </div>
   )
@@ -77,7 +81,7 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     height: "100vh",
-    paddingBottom: "80px",
+    paddingBottom: "148px",
   },
   header: {
     display: "flex",
@@ -85,25 +89,21 @@ const styles = {
     gap: "12px",
     padding: "16px 20px",
     background: "var(--surface)",
-    borderBottom: "1px solid var(--border)",
-    boxShadow: "var(--shadow-sm)",
-    position: "sticky",
-    top: 0,
-    zIndex: 10,
+    borderBottom: "1px solid var(--border-dark)",
   },
   avatar: {
-    width: "42px",
-    height: "42px",
-    borderRadius: "50%",
+    width: "40px",
+    height: "40px",
     background: "var(--accent)",
     color: "#fff",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "15px",
+    fontSize: "13px",
     fontWeight: "700",
     flexShrink: 0,
   },
+  headerInfo: { flex: 1 },
   name: {
     fontSize: "15px",
     fontWeight: "700",
@@ -114,30 +114,53 @@ const styles = {
     color: "var(--text-faint)",
     marginTop: "1px",
   },
+  onlineWrap: {
+    display: "flex",
+    alignItems: "center",
+    gap: "5px",
+  },
   onlineDot: {
-    width: "10px",
-    height: "10px",
+    width: "7px",
+    height: "7px",
     borderRadius: "50%",
     background: "var(--success)",
-    marginLeft: "auto",
-    flexShrink: 0,
     animation: "livePulse 2s infinite",
+  },
+  onlineText: {
+    fontSize: "12px",
+    fontWeight: "600",
+    color: "var(--success)",
   },
   messages: {
     flex: 1,
     overflowY: "auto",
-    padding: "16px 16px 8px",
+    padding: "16px",
     display: "flex",
     flexDirection: "column",
-    gap: "8px",
+    gap: "10px",
+    background: "var(--bg)",
   },
   msgRow: {
     display: "flex",
+    alignItems: "flex-end",
+    gap: "8px",
+  },
+  msgAvatar: {
+    width: "28px",
+    height: "28px",
+    background: "var(--accent)",
+    color: "#fff",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "10px",
+    fontWeight: "700",
+    flexShrink: 0,
   },
   bubble: {
-    maxWidth: "78%",
+    maxWidth: "75%",
     padding: "10px 14px",
-    border: "1px solid var(--border)",
+    border: "1px solid",
     wordBreak: "break-word",
     overflowWrap: "break-word",
     whiteSpace: "pre-wrap",
@@ -148,17 +171,16 @@ const styles = {
     lineHeight: 1.5,
   },
   bubbleTime: {
-    fontSize: "11px",
+    fontSize: "10px",
     color: "var(--text-faint)",
-    marginTop: "4px",
+    marginTop: "5px",
     textAlign: "right",
+    fontWeight: "500",
   },
   inputWrap: {
     display: "flex",
-    gap: "8px",
-    padding: "12px 16px",
     background: "var(--surface)",
-    borderTop: "1px solid var(--border)",
+    borderTop: "1px solid var(--border-dark)",
     position: "fixed",
     bottom: "80px",
     left: "50%",
@@ -168,21 +190,18 @@ const styles = {
   },
   input: {
     flex: 1,
-    background: "var(--surface-2)",
-    borderRadius: "100px",
-    padding: "12px 18px",
+    padding: "16px 20px",
     fontSize: "15px",
     color: "var(--text)",
-    border: "1px solid var(--border)",
+    borderRight: "1px solid var(--border)",
   },
   sendBtn: {
     background: "var(--accent)",
     color: "#fff",
-    fontSize: "14px",
+    fontSize: "13px",
     fontWeight: "700",
-    padding: "12px 18px",
-    borderRadius: "100px",
+    padding: "16px 20px",
     flexShrink: 0,
+    letterSpacing: "0.5px",
   },
 }
-

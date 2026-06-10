@@ -3,89 +3,95 @@ import { location, patient } from "../data/dummy"
 export default function Location() {
   return (
     <div style={styles.wrap}>
-      <div style={styles.pageHeader}>
+      <div style={styles.topbar}>
         <div style={styles.pageTitle}>Lokasi</div>
         <div style={{
-          ...styles.statusRow,
-          color: location.safe ? "var(--success)" : "var(--danger)",
+          ...styles.statusPill,
+          color:      location.safe ? "var(--success)" : "var(--danger)",
+          background: location.safe ? "var(--success-light)" : "var(--danger-light)",
+          border:     `1px solid ${location.safe ? "#6ee7a0" : "#f87171"}`,
         }}>
           <span style={{
             ...styles.statusDot,
             background: location.safe ? "var(--success)" : "var(--danger)",
           }} />
-          {location.safe ? "Berada di area aman" : "Di luar area aman"}
+          {location.safe ? "Area Aman" : "Di luar area"}
         </div>
       </div>
 
       <div style={styles.mapWrap}>
         <div style={styles.mapGrid} />
         <div style={styles.mapDot} />
-        <div style={styles.mapRoomTag}>{patient.room}</div>
+        <div style={styles.mapTag}>{patient.room}</div>
       </div>
 
-      <div style={styles.body}>
-        <div style={styles.card}>
-          <div style={styles.row}>
-            <span style={styles.rowLabel}>Alamat</span>
-            <span style={styles.rowVal}>{location.address}</span>
+      <div style={styles.infoCard}>
+        {[
+          { label: "Alamat",         val: location.address },
+          { label: "Terakhir Gerak", val: `Pukul ${location.lastMoved}` },
+          { label: "Area Aman",      val: location.zone },
+        ].map((r, i) => (
+          <div key={i} style={{
+            ...styles.row,
+            borderBottom: i < 2 ? "1px solid var(--border)" : "none",
+          }}>
+            <span style={styles.rowLabel}>{r.label}</span>
+            <span style={styles.rowVal}>{r.val}</span>
           </div>
-          <div style={styles.row}>
-            <span style={styles.rowLabel}>Terakhir Bergerak</span>
-            <span style={styles.rowVal}>Pukul {location.lastMoved}</span>
-          </div>
-          <div style={styles.row}>
-            <span style={styles.rowLabel}>Area Aman</span>
-            <span style={styles.rowVal}>{location.zone}</span>
-          </div>
-        </div>
-
-        <div style={styles.noteCard}>
-          Posisi diperkirakan berdasarkan sinyal perangkat ElderSafe.
-          Akurasi dalam ruangan sekitar 3–5 meter.
-        </div>
+        ))}
       </div>
+
+      <div style={styles.noteCard}>
+        Posisi diperkirakan berdasarkan sinyal perangkat ElderSafe.
+        Akurasi dalam ruangan sekitar 3–5 meter.
+      </div>
+
     </div>
   )
 }
 
 const styles = {
-  wrap: { paddingBottom: "100px" },
-  pageHeader: {
-    background: "var(--surface)",
-    borderBottom: "2px solid var(--border-dark)",
-    padding: "20px",
-  },
-  pageTitle: {
-    fontSize: "22px",
-    fontWeight: "bold",
-    color: "var(--text)",
-    marginBottom: "8px",
-  },
-  statusRow: {
+  wrap: { paddingBottom: "80px" },
+  topbar: {
     display: "flex",
     alignItems: "center",
-    gap: "8px",
-    fontSize: "14px",
-    fontWeight: "bold",
+    justifyContent: "space-between",
+    padding: "20px",
+    background: "var(--surface)",
+    borderBottom: "1px solid var(--border-dark)",
+  },
+  pageTitle: {
+    fontSize: "18px",
+    fontWeight: "800",
+    color: "var(--text)",
+  },
+  statusPill: {
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
+    fontSize: "12px",
+    fontWeight: "700",
+    padding: "6px 12px",
   },
   statusDot: {
-    width: "8px",
-    height: "8px",
+    width: "7px",
+    height: "7px",
     borderRadius: "50%",
-    flexShrink: 0,
     animation: "livePulse 2s infinite",
   },
   mapWrap: {
     position: "relative",
-    height: "200px",
-    background: "#e4dfd4",
-    borderBottom: "2px solid var(--border-dark)",
+    height: "190px",
+    background: "#e2ddd2",
+    borderBottom: "1px solid var(--border-dark)",
+    borderTop: "1px solid var(--border)",
+    marginTop: "12px",
     overflow: "hidden",
   },
   mapGrid: {
     position: "absolute",
     inset: 0,
-    backgroundImage: "linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px)",
+    backgroundImage: "linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)",
     backgroundSize: "28px 28px",
   },
   mapDot: {
@@ -93,56 +99,56 @@ const styles = {
     top: "50%", left: "52%",
     width: "14px", height: "14px",
     background: "var(--accent)",
-    border: "3px solid #f7f4ee",
+    border: "3px solid #faf8f4",
     transform: "translate(-50%,-50%)",
-    boxShadow: "0 0 0 6px rgba(58,90,64,0.2)",
+    boxShadow: "0 0 0 8px rgba(61,107,74,0.15)",
   },
-  mapRoomTag: {
+  mapTag: {
     position: "absolute",
     bottom: "12px", left: "12px",
     background: "var(--surface)",
     border: "1px solid var(--border-dark)",
-    fontFamily: "'Courier New', monospace",
     fontSize: "11px",
-    fontWeight: "bold",
+    fontWeight: "700",
     padding: "4px 10px",
     color: "var(--text-muted)",
   },
-  body: { padding: "16px 20px" },
-  card: {
+  infoCard: {
     background: "var(--surface)",
-    border: "1px solid var(--border)",
-    borderTop: "3px solid var(--border-dark)",
-    marginBottom: "12px",
+    borderTop: "1px solid var(--border)",
+    borderBottom: "1px solid var(--border)",
+    marginTop: "12px",
   },
   row: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "flex-start",
     gap: "16px",
-    padding: "14px 16px",
-    borderBottom: "1px solid var(--border)",
+    padding: "14px 20px",
     fontSize: "14px",
   },
   rowLabel: {
-    color: "var(--text-faint)",
-    fontFamily: "'Courier New', monospace",
     fontSize: "12px",
+    fontWeight: "600",
+    color: "var(--text-faint)",
     flexShrink: 0,
-    paddingTop: "2px",
+    paddingTop: "1px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
   },
   rowVal: {
-    fontWeight: "bold",
+    fontWeight: "600",
     color: "var(--text)",
     textAlign: "right",
+    fontSize: "14px",
   },
   noteCard: {
+    margin: "12px 20px 0",
+    padding: "14px 16px",
     background: "var(--surface-2)",
     border: "1px solid var(--border)",
-    padding: "14px 16px",
     fontSize: "13px",
     color: "var(--text-muted)",
     lineHeight: 1.7,
-    fontStyle: "italic",
   },
 }
